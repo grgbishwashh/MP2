@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce_db
+    username: postgres
+    password: admin123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.kcg.ac.jp
+    port: 465
+    username: st102350  # Only the part before @
+    password: "@@Asunita00"
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: grgbishwashh@gmail.com
+#    password: "hkie uouf yodx polp"
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+server:
+  port: 8080

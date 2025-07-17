@@ -49,9 +49,11 @@ class AuthController(
                 .body(mapOf("message" to "Invalid email or password"))
         }
 
-        val token = jwtUtil.generateToken(user.email)
+        val roles = user.roles.map { it.name }  // 👈 Added line
+        val token = jwtUtil.generateToken(user.email, roles) // 👈 Updated line
         return ResponseEntity.ok(LoginResponse(token))
     }
+
 
     @GetMapping("/verify")
     fun verify(@RequestParam token: String): ResponseEntity<String> {

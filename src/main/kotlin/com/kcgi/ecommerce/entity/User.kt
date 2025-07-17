@@ -48,5 +48,9 @@ data class User(
     var intakeYear: Int? = null,
 
     @Column(nullable = true)
-    var course: String? = null  // Store course name directly (you can enum later if needed)
+    var course: String? = null,  // Store course name directly (you can enum later if needed)
+
+    @Column
+    var enabled: Boolean? = true
+
 )

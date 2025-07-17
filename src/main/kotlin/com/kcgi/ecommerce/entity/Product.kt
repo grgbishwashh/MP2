@@ -26,6 +26,10 @@ data class Product(
     @Column(nullable = false, columnDefinition = "boolean default false")
     var isSold: Boolean = false,
 
+    @Column
+    var isBlocked: Boolean? = false,
+
+
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     val seller: User,

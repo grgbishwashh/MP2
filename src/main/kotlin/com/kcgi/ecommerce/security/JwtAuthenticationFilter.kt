@@ -4,8 +4,8 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -13,7 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthenticationFilter(
     private val jwtUtil: JwtUtil,
-    private val userDetailsService: UserDetailsService
 ) : OncePerRequestFilter() {
 
     override fun doFilterInternal(
@@ -27,15 +26,31 @@ class JwtAuthenticationFilter(
             val email = jwtUtil.extractEmail(token)
 
             if (email != null && SecurityContextHolder.getContext().authentication == null) {
-                val userDetails = userDetailsService.loadUserByUsername(email)
-
                 if (jwtUtil.validateToken(token)) {
+                    val claims = jwtUtil.getClaims(token)
+
+                    val roles = claims["roles"] as? List<*> ?: emptyList<Any>()
+                    val authorities = roles.map { SimpleGrantedAuthority("ROLE_$it") }
+
                     val authToken = UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.authorities
+                        org.springframework.security.core.userdetails.User(email, "", authorities),
+                        null,
+                        authorities
                     )
+
                     authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+
+                    println("🔐 Email from token: $email")
+                    println("🔐 Roles from token: $roles")
+                    println("✅ Authorities being set: $authorities")
+
                     SecurityContextHolder.getContext().authentication = authToken
+                } else {
+                    println("❌ Invalid token for email: $email")
                 }
+            } else {
+                if (email == null) println("❌ Could not extract email from token")
+                else println("🔒 Authentication already set in context")
             }
         }
 

@@ -25,16 +25,19 @@ class JwtUtil {
         SecretKeySpec(decodedKey, 0, decodedKey.size, "HmacSHA256")
     }
 
-    fun generateToken(email: String): String {
+    fun generateToken(email: String, roles: List<String>): String {
+
         val now = Date()
         val expiryDate = Date(now.time + expirationMs)
 
         return Jwts.builder()
             .setSubject(email)
+            .claim("roles", roles) // 👈 add this line
             .setIssuedAt(now)
             .setExpiration(expiryDate)
             .signWith(signingKey, SignatureAlgorithm.HS256)
             .compact()
+
     }
 
     fun validateToken(token: String): Boolean {
@@ -51,7 +54,7 @@ class JwtUtil {
         return getClaims(token).subject
     }
 
-    private fun getClaims(token: String): Claims {
+    fun getClaims(token: String): Claims {
         return Jwts.parserBuilder()
             .setSigningKey(signingKey)
             .build()

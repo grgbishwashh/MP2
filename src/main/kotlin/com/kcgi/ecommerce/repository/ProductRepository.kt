@@ -8,6 +8,8 @@ interface ProductRepository : JpaRepository<Product, Long> {
     fun findBySeller(seller: User): List<Product>
     fun findByIsSoldFalse(): List<Product>
     fun findByBuyer(buyer: User): List<Product>
+    fun findByIsSoldFalseAndIsBlockedFalse(): List<Product>
+
 
 
 }
